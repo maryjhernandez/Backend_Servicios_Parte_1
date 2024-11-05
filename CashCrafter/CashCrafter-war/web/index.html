@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CashCrafter</title>
+    <style>
+        .container {
+            margin: 20px;
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        async function registrarUsuario() {
+            const userData = {
+                nombre: document.getElementById('nombre').value,
+                correo: document.getElementById('correo').value,
+                contraseña: document.getElementById('contraseña').value,
+                usuario: document.getElementById('usuario').value,
+                rol: document.getElementById('rol').value
+            };
+
+            try {
+                const response = await fetch('/CashCrafter-war/api/usuarios/registro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    alert('Usuario registrado exitosamente');
+                } else {
+                    const errorText = await response.text();
+                    alert('Error al registrar usuario: ' + errorText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al conectar con el servidor: ' + error);
+            }
+        }
+
+        async function login() {
+            const loginData = {
+                correo: document.getElementById('loginCorreo').value,
+                contraseña: document.getElementById('loginContraseña').value
+            };
+
+            try {
+                const response = await fetch('/CashCrafter-war/api/usuarios/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                if (response.ok) {
+                    const usuario = await response.json();
+                    alert('Inicio de sesión exitoso. ¡Bienvenido ' + usuario.nombre + '!');
+                    // Aquí puedes redirigir al usuario a otra página o mostrar contenido adicional
+                } else {
+                    const errorText = await response.text();
+                    alert('Error en el inicio de sesión: ' + (errorText || 'Credenciales incorrectas'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al conectar con el servidor: ' + error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h2>Registro de Usuario</h2>
+            <div>
+                <input type="text" id="nombre" placeholder="Nombre"><br><br>
+                <input type="email" id="correo" placeholder="Correo"><br><br>
+                <input type="password" id="contraseña" placeholder="Contrasena"><br><br>
+                <input type="text" id="usuario" placeholder="Usuario"><br><br>
+                <select id="rol">
+                    <option value="USUARIO">Usuario</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                    <option value="USUARIO_PREMIUM">Usuario Premium</option>
+                </select><br><br>
+                <button onclick="registrarUsuario()">Registrar</button>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Iniciar Sesion</h2>
+            <div>
+                <input type="email" id="loginCorreo" placeholder="Correo"><br><br>
+                <input type="password" id="loginContraseña" placeholder="Contraseña"><br><br>
+                <button onclick="login()">Iniciar Sesión</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
